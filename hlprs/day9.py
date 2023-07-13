@@ -17,10 +17,10 @@ class Rope:
     def __init__(self, h: list[int], t: list[int]):
         self.h = h
         self.t = t
-        self.vstd = [tuple(t)]
+        self.vstd = {tuple(t)}
 
     def move(self, way: str, amnt: int) -> None:
-        self.update_h()
+        self.update_h(way, amnt)
         return
 
     def update_h(self, way: str, amnt: int) -> None:
