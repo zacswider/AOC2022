@@ -50,19 +50,33 @@ class Rope:
         rabs = abs(r)
         ctype = int(c / cabs) if cabs != 0 else 0
         rtype = int(r / rabs) if rabs != 0 else 0
-        """TODO: if the head and tail aren't touching and aren't in the same row or column, the tail always moves one step diagonally to keep up
-        this means make a diagonal move it not goodnuff and staggered
-        """
+
+        if self.staggered:  # assumed not goodnuff
+            self.movet(ctype, rtype)
+            cabs -= 1
+            rabs -= 1
+
+        if self.staggered:
+            raise ValueError("still staggered?!?!")
+
         if cabs > rabs:
-            self.t[0] += ctype * (cabs - 1)
+            for _ in range(cabs - 1):
+                self.movet(ctype, 0)
+
         elif rabs > cabs:
-            self.t[1] += rtype * (rabs - 1)
+            for _ in range(rabs - 1):
+                self.movet(0, rtype)
+
         else:
             raise ValueError("unexpected!")
-        if self.goodnuff:
-            print("that was goodnuff!")
-        else:
-            print("more required")
+
+        if not self.goodnuff:
+            raise ValueError("more required")
+
+    def movet(self, col, row) -> None:
+        self.t[0] += col
+        self.t[1] += row
+        self.vstd.add(tuple(self.t))
 
     @property
     def coldelta(self) -> int:
