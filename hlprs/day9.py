@@ -32,7 +32,9 @@ class Rope:
             print("moving t")
             self.update_t()
         self.vstd.add(tuple(self.t))
+        print(f"h: {self.h}")
         print(f"t: {self.t}")
+        print(f"goodnuff: {self.goodnuff}")
         print("-------------")
         return
 
@@ -42,13 +44,25 @@ class Rope:
         self.h[idx] += drctn*amnt
 
     def update_t(self) -> None:
-        if not self.staggered:
-            if self.rowdelta == 0:
-                self.t[0] += self.coldelta - 1
-            else:
-                self.t[1] += self.rowdelta - 1
+        r = self.rowdelta
+        c = self.coldelta
+        cabs = abs(c)
+        rabs = abs(r)
+        ctype = int(c / cabs) if cabs != 0 else 0
+        rtype = int(r / rabs) if rabs != 0 else 0
+        """TODO: if the head and tail aren't touching and aren't in the same row or column, the tail always moves one step diagonally to keep up
+        this means make a diagonal move it not goodnuff and staggered
+        """
+        if cabs > rabs:
+            self.t[0] += ctype * (cabs - 1)
+        elif rabs > cabs:
+            self.t[1] += rtype * (rabs - 1)
         else:
-            return
+            raise ValueError("unexpected!")
+        if self.goodnuff:
+            print("that was goodnuff!")
+        else:
+            print("more required")
 
     @property
     def coldelta(self) -> int:
