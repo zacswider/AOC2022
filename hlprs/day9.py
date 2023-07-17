@@ -1,4 +1,4 @@
-class Rope:
+class Knot:
 
     ways = {
         "R": 1,
@@ -14,10 +14,57 @@ class Rope:
         "D": 0
     }
 
-    def __init__(self, h: list[int], t: list[int]):
-        self.h = h
-        self.t = t
-        self.vstd = {tuple(t)}
+    def __init__(self) -> None:
+        self.pos = [0, 0]
+
+
+class Head(Knot):
+
+    def __init__(self):
+        super().__init__()
+
+    def move(self, way: str, amnt: int) -> None:
+        drctn = self.ways[way]
+        idx = self.dirs[way]
+        self.pos[idx] += drctn*amnt
+
+
+class Tail(Knot):
+
+    def __init__(self, parent: Knot, end: bool):
+        super().__init__()
+        self.parent = parent
+        self.end = end
+        self.vstd = {tuple(self.pos)}
+
+    def chase(self) -> None:
+        print("chasing!")
+
+    @property
+    def coldelta(self) -> int:
+        return self.parent.pos[0] - self.pos[0]
+
+    @property
+    def rowdelta(self) -> int:
+        return self.parent.pos[1] - self.pos[1]
+
+    @property
+    def goodnuff(self) -> bool:
+        return all(
+            [
+                abs(self.coldelta) <= 1,
+                abs(self.rowdelta) <= 1
+            ]
+        )
+
+    @property
+    def staggered(self) -> bool:
+        return not any(
+            [
+                self.coldelta == 0,
+                self.rowdelta == 0
+            ]
+        )
 
     def move(self, way: str, amnt: int) -> None:
         self.update_h(way, amnt)
@@ -39,9 +86,7 @@ class Rope:
         return
 
     def update_h(self, way: str, amnt: int) -> None:
-        drctn = Rope.ways[way]
-        idx = Rope.dirs[way]
-        self.h[idx] += drctn*amnt
+        pass
 
     def update_t(self) -> None:
         r = self.rowdelta
@@ -78,28 +123,6 @@ class Rope:
         self.t[1] += row
         self.vstd.add(tuple(self.t))
 
-    @property
-    def coldelta(self) -> int:
-        return self.h[0] - self.t[0]
 
-    @property
-    def rowdelta(self) -> int:
-        return self.h[1] - self.t[1]
 
-    @property
-    def goodnuff(self) -> bool:
-        return all(
-            [
-                abs(self.coldelta) <= 1,
-                abs(self.rowdelta) <= 1
-            ]
-        )
 
-    @property
-    def staggered(self) -> bool:
-        return not any(
-            [
-                self.coldelta == 0,
-                self.rowdelta == 0
-            ]
-        )
